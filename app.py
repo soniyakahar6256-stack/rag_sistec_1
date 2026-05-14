@@ -12,7 +12,7 @@ st.set_page_config(page_title="PDF Q&A with Gemini")
 st.title("📄 PDF Q&A with Gemini")
 
 try:
-    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    genai.configure(api_key=st.secrets["Gemini API Key"])
     st.sidebar.success("✅ Gemini API Connected")
 
 except Exception as e:
