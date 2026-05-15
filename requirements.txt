@@ -1,6 +1,7 @@
-stremlite
+streamlit
 google-generativeai
 sentence-transformers
 faiss-cpu
 numpy
 pypdf
+tempfile
