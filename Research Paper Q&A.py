@@ -4,11 +4,11 @@ from sentence_transformers import SentenceTransformer
 import faiss
 from pypdf import PdfReader
 
-# Page setup
+# App setup
 st.set_page_config(page_title="PDF Q&A with Gemini")
 st.title("📄 PDF Q&A with Gemini")
 
-# Gemini API
+# Gemini API setup
 try:
     genai.configure(api_key=st.secrets["Gemini API Key"])
     st.sidebar.success("✔️ Gemini API Connected")
@@ -17,7 +17,7 @@ except:
     st.stop()
 
 
-# Text chunking function
+# Chunking function
 def chunk_text(text, chunk_size=500, overlap=50):
     chunks = []
     start = 0
@@ -31,7 +31,10 @@ def chunk_text(text, chunk_size=500, overlap=50):
 
 
 # Upload PDF
-uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
+uploaded_file = st.file_uploader(
+    "Upload your PDF",
+    type="pdf"
+)
 
 if uploaded_file:
 
@@ -50,19 +53,25 @@ if uploaded_file:
                     "page": page_num + 1
                 })
 
-        # Create chunks + page numbers
+        # Create chunks
         texts = []
         page_numbers = []
 
         for page_data in pages_data:
-            page_chunks = chunk_text(page_data["text"])
+            page_chunks = chunk_text(
+                page_data["text"]
+            )
 
             for chunk in page_chunks:
                 texts.append(chunk)
-                page_numbers.append(page_data["page"])
+                page_numbers.append(
+                    page_data["page"]
+                )
 
         # Embeddings
-        with st.spinner("Creating embeddings..."):
+        with st.spinner(
+            "Creating embeddings..."
+        ):
 
             model_emb = SentenceTransformer(
                 "all-MiniLM-L6-v2"
@@ -130,10 +139,11 @@ Answer:
                         prompt
                     )
 
+                # Answer
                 st.subheader("Answer")
                 st.write(response.text)
 
-                # Sorted source pages
+                # Source Pages
                 source_pages = sorted(
                     list(
                         set(
@@ -147,9 +157,12 @@ Answer:
 
                 st.write(
                     "📌 Source Pages:",
-                    source_pages
+                    ", ".join(
+                        map(str, source_pages)
+                    )
                 )
 
+                # Context
                 with st.expander(
                     "Context Used"
                 ):
