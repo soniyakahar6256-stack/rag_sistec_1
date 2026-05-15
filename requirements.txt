@@ -4,4 +4,3 @@ sentence-transformers
 faiss-cpu
 numpy
 pypdf
-tempfile
