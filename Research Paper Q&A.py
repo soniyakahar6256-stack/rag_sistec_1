@@ -32,14 +32,18 @@ if uploaded_file:
         with st.spinner("Extracting text from PDF..."):
 
             reader = PdfReader(tmp_path)
+ pages_data = []
 
-            full_text = ""
+for page_num, page in
+enumerate(reader.pages):
+text = page.extract_text()
 
-            for page in reader.pages:
-                text = page.extract_text()
-
-                if text:
-                    full_text += text + "\n"
+if text:
+    pages_data.append({
+        "text".text,
+        "page":page_num+1
+    })
+            
 
         def chunk_text(text, chunk_size=500, overlap=50):
 
