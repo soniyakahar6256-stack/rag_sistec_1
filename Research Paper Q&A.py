@@ -121,6 +121,9 @@ Answer:
                         st.subheader("Answer")
 
                         st.write(response.text)
+                        source_pages = list(set([page_numbers[i] for i in indices[0]]))
+
+st.write("Source Pages:", source_pages)
 
                     with st.expander("📋 Context Used"):
                         st.write(context)
