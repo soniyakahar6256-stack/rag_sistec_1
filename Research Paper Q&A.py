@@ -29,6 +29,7 @@ if uploaded_file:
 
 try:
     with st.spinner("Extracting text from PDF..."):
+        uploaded_file.seek(0)
         reader = PdfReader(uploaded_file)
 
         pages_data = []
