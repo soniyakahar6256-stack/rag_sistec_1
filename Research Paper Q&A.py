@@ -61,7 +61,15 @@ if text:
 
             return chunks
 
-        texts = chunk_text(full_text)
+        texts = []
+page_numbers = []
+
+for page_data in pages_data:
+    page_chunks = chunk_text(page_data["text"])
+
+    for chunk in page_chunks:
+        texts.append(chunk)
+        page_numbers.append(page_data["page"])
 
         with st.spinner("Creating embeddings and FAISS index..."):
 
