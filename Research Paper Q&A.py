@@ -28,19 +28,19 @@ if uploaded_file:
         tmp_path = tmp.name
 
     try:
+        with st.spinner("Extracting text from PDF..."):
+            
+          reader = PdfReader(tmp_path)
+            
+          pages_data = []
 
-with st.spinner("Extracting text from PDF..."):
-        reader = PdfReader(tmp_path)
+          for page_num, page in enumerate(reader.pages):
+              text = page.extract_text()
 
-        pages_data = []
-
-        for page_num, page in enumerate(reader.pages):
-            text = page.extract_text()
-
-            if text:
-                pages_data.append({
-                    "text": text,
-                    "page": page_num + 1
+              if text:
+                  pages_data.append({
+                      "text": text,
+                      "page": page_num + 1
                 })
 
         def chunk_text(text, chunk_size=500, overlap=50):
