@@ -66,7 +66,6 @@ try:
 except Exception as e:
     st.error(f"Error: {e}")
 
-finally:
-    os.unlink(tmp_path)
+
 
         
