@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 from sentence_transformers import SentenceTransformer
 import faiss
-import numpy as np
 from pypdf import PdfReader
 
 # Page setup
@@ -17,7 +16,8 @@ except:
     st.error("Gemini API Key not found")
     st.stop()
 
-# Chunking function
+
+# Text chunking function
 def chunk_text(text, chunk_size=500, overlap=50):
     chunks = []
     start = 0
@@ -28,6 +28,7 @@ def chunk_text(text, chunk_size=500, overlap=50):
         start += chunk_size - overlap
 
     return chunks
+
 
 # Upload PDF
 uploaded_file = st.file_uploader("Upload your PDF", type="pdf")
@@ -49,7 +50,7 @@ if uploaded_file:
                     "page": page_num + 1
                 })
 
-        # Create chunks
+        # Create chunks + page numbers
         texts = []
         page_numbers = []
 
@@ -60,29 +61,47 @@ if uploaded_file:
                 texts.append(chunk)
                 page_numbers.append(page_data["page"])
 
-        # Embeddings + FAISS
+        # Embeddings
         with st.spinner("Creating embeddings..."):
-            model_emb = SentenceTransformer("all-MiniLM-L6-v2")
 
-            embeddings = model_emb.encode(texts).astype("float32")
+            model_emb = SentenceTransformer(
+                "all-MiniLM-L6-v2"
+            )
 
-            index = faiss.IndexFlatL2(embeddings.shape[1])
+            embeddings = model_emb.encode(
+                texts
+            ).astype("float32")
+
+            index = faiss.IndexFlatL2(
+                embeddings.shape[1]
+            )
+
             index.add(embeddings)
 
-        st.success(f"PDF processed successfully! {len(texts)} chunks created.")
+        st.success(
+            f"PDF processed successfully! {len(texts)} chunks created."
+        )
 
         # Ask question
-        question = st.text_input("Ask a question about your PDF")
+        question = st.text_input(
+            "Ask a question about your PDF"
+        )
 
         if st.button("Get Answer"):
 
             if question.strip() == "":
-                st.warning("Please enter a question")
+                st.warning(
+                    "Please enter a question"
+                )
 
             else:
-                q_emb = model_emb.encode([question]).astype("float32")
+                q_emb = model_emb.encode(
+                    [question]
+                ).astype("float32")
 
-                distances, indices = index.search(q_emb, k=4)
+                distances, indices = index.search(
+                    q_emb, k=4
+                )
 
                 context = "\n\n".join(
                     [texts[i] for i in indices[0]]
@@ -100,23 +119,12 @@ Question:
 Answer:
 """
 
-                llm = genai.GenerativeModel("gemini-2.5-flash-lite")
-
-                with st.spinner("Gemini is thinking..."):
-                    response = llm.generate_content(prompt)
-
-                st.subheader("Answer")
-                st.write(response.text)
-
-                # Source pages
-                source_pages = list(
-                    set([page_numbers[i] for i in indices[0]])
+                llm = genai.GenerativeModel(
+                    "gemini-2.5-flash-lite"
                 )
 
-                st.write("📌 Source Pages:", source_pages)
-
-                with st.expander("Context Used"):
-                    st.write(context)
-
-    except Exception as e:
-        st.error(f"Error: {e}")
+                with st.spinner(
+                    "Gemini is thinking..."
+                ):
+                    response = llm.generate_content(
+                        prompt
