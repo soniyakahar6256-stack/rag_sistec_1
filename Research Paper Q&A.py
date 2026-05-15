@@ -128,3 +128,32 @@ Answer:
                 ):
                     response = llm.generate_content(
                         prompt
+                    )
+
+                st.subheader("Answer")
+                st.write(response.text)
+
+                # Sorted source pages
+                source_pages = sorted(
+                    list(
+                        set(
+                            [
+                                page_numbers[i]
+                                for i in indices[0]
+                            ]
+                        )
+                    )
+                )
+
+                st.write(
+                    "📌 Source Pages:",
+                    source_pages
+                )
+
+                with st.expander(
+                    "Context Used"
+                ):
+                    st.write(context)
+
+    except Exception as e:
+        st.error(f"Error: {e}")
